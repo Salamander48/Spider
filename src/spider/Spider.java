@@ -12,33 +12,43 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.ArrayList;
-
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import java.net.*;
 import java.io.File;
 import java.io.FileOutputStream;
+
+import java.util.*;
+
+import java.net.*;
+
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Spider {
-   public static void main(String[] args) throws IOException {
-       
+    
+    public static Elements url_handeler (String[] args){
         Validate.isTrue(args.length == 1, "Usage: please provide a url");
         String url = args[0];
         System.out.println("Fetching " + url );
         
         //Assignment
-        Document doc = Jsoup.connect(url).userAgent("Mozilla").get();
+        Document doc = null;
+        try {
+            doc = Jsoup.connect(url).userAgent("Mozilla").get();
+        } catch (IOException ex) {
+            Logger.getLogger(Spider.class.getName()).log(Level.SEVERE, null, ex);
+        }
         Elements links = doc.select("a[href]");
-        //Elements media = doc.select("[src]");
-        //Elements imports = doc.select("link[href]");
-        
+        return links;
+    }
+    
+   public static void main(String[] args) throws IOException {
+       
+        Elements links = url_handeler(args);
+           
         //Creating search settings to get correct links
         Pattern pattern = Pattern.compile(".*mp3.*");
         
